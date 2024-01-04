@@ -1,0 +1,17 @@
+trigger: none
+  # paths:
+  #   include:
+  #     - Dockerfile
+  #     - agent-pipeline.yml
+  #     - workflows/image.yml
+  #     - scripts/build_pool_agent.sh
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: infra-cvo8-common-v1
+  - group: infra-cvo8-secrets-v1
+
+stages:
+  - template: /workflows/default/image.yml

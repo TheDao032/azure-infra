@@ -1,0 +1,15 @@
+stages:
+  - stage: resources_init
+    jobs:
+      - job: resources_init_job
+        displayName: Init Resources
+        steps:
+          - script: |
+              chmod +x ./scripts/resource_initialization.sh
+            displayName: "Enable script permissions"
+
+          - task: Bash@3
+            inputs:
+              filePath: "./scripts/resource_initialization.sh"
+              arguments: "$(resourceLocation) $(resourceGroup) $(storageAccountName) $(container) $(armClientID) $(armClientSecret) $(armTenantID) $(veleroContainer) $(selfAzpUrl) $(selfAzpToken) $(selfAzpPool) $(selfAzpAgent) $(targetarch) $(crPassword) $(crName)"
+            displayName: "Init resources"

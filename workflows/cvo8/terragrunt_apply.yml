@@ -1,0 +1,32 @@
+stages:
+  - stage: terragrunt_apply
+    dependsOn: terragrunt_validate_and_plan
+    condition: in(dependencies.terragrunt_validate_and_plan.result, 'Succeeded')
+    jobs:
+      - job: terragrunt_apply_job
+        pool:
+          name: ntuc-docker
+          vmImage: azp-jumpbox-agent
+        displayName: Terragrunt apply
+        steps:
+          - script: |
+              chmod +x ./scripts/terragrunt_apply.sh
+            displayName: "Enable script permissions"
+
+          - task: Bash@3
+            inputs:
+              filePath: "./scripts/terragrunt_apply.sh"
+              arguments: "plan.log $(environment) $(resourceGroup) $(storageAccountName) $(storageAccountKey) $(subscriptionID) $(container) $(location) $(armClientID) $(armClientSecret) $(armTenantID) $(armObjectID) $(jumpboxVmPassword) $(azpUrl) $(azpToken) $(azpPool) $(azpAgent) $(targetarch) $(crPassword) $(crName)"
+            displayName: "Run terragrunt apply-all"
+
+          - task: CopyFiles@2
+            inputs:
+              contents: "apply.log"
+              targetFolder: $(Build.ArtifactStagingDirectory)
+            displayName: "Copy apply output to artifact staging directory"
+
+          - task: PublishPipelineArtifact@0
+            inputs:
+              targetPath: "$(Build.ArtifactStagingDirectory)"
+              ArtifactName: "terragrunt_apply"
+            displayName: "Publish terragrunt_apply artifact"

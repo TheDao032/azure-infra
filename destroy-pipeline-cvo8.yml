@@ -1,0 +1,18 @@
+trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: infra-cvo8-common-v1
+  - group: infra-cvo8-secrets-v1
+  - name: environment
+    ${{ if eq( variables['Build.SourceBranchName'], 'dev' ) }}:
+      value: dev
+    ${{ if eq( variables['Build.SourceBranchName'], 'staging' ) }}:
+      value: staging
+    ${{ if eq( variables['Build.SourceBranchName'], 'prod' ) }}:
+      value: prod
+
+stages:
+  - template: /workflows/cvo8/terragrunt_destroy.yml

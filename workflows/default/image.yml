@@ -1,0 +1,26 @@
+stages:
+  - stage: build_push_image
+    jobs:
+      - job: build_push_image_job
+        displayName: Build and push image to acr
+        steps:
+          - task: Docker@2
+            displayName: Build
+            inputs:
+              command: build
+              containerRegistry: ntuc-cr-ntd
+              repository: infra
+              Dockerfile: Dockerfile
+              tags: |
+                latest
+                $(Build.BuildId)
+
+          - task: Docker@2
+            displayName: Push
+            inputs:
+              command: push
+              containerRegistry: ntuc-cr-ntd
+              repository: infra
+              tags: |
+                latest
+                $(Build.BuildId)

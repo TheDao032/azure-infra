@@ -1,0 +1,30 @@
+stages:
+  - stage: terragrunt_validate_and_plan
+    jobs:
+      - job: terragrunt_validate_and_plan_job
+        pool:
+          name: ntuc-docker
+          vmImage: azp-jumpbox-agent
+        displayName: Terragrunt validate and plan
+        steps:
+          - script: |
+              chmod +x ./scripts/terragrunt_validate_and_plan.sh
+            displayName: "Enable script permissions"
+
+          - task: Bash@3
+            inputs:
+              filePath: "./scripts/terragrunt_validate_and_plan.sh"
+              arguments: "plan.log $(environment) $(resourceGroup) $(storageAccountName) $(storageAccountKey) $(subscriptionID) $(container) $(location) $(armClientID) $(armClientSecret) $(armTenantID) $(armObjectID) $(jumpboxVmPassword) $(azpUrl) $(azpToken) $(azpPool) $(azpAgent) $(targetarch) $(crPassword) $(crName)"
+            displayName: "Run terragrunt validate-all and plan-all"
+
+          - task: CopyFiles@2
+            inputs:
+              contents: "plan.log"
+              targetFolder: $(Build.ArtifactStagingDirectory)
+            displayName: "Copy apply output to artifact staging directory"
+
+          - task: PublishPipelineArtifact@0
+            inputs:
+              targetPath: "$(Build.ArtifactStagingDirectory)"
+              ArtifactName: "terragrunt_validate_and_plan"
+            displayName: "Publish terragrunt_validate_and_plan artifact"

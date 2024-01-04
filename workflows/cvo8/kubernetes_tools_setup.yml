@@ -1,0 +1,25 @@
+stages:
+  - stage: kubernetes_setup
+    dependsOn: terragrunt_apply
+    condition: in(dependencies.terragrunt_apply.result, 'Succeeded')
+    jobs:
+      - job: kubernetes_setup_job
+        pool:
+          name: Terraform
+          vmImage: jumpbox-agent-host
+        variables:
+          - name: aksClusterName
+            value: $(aksCluster)-$(environment)
+          - name: deploymentRG
+            value: $(deploymentResourceGroup)-$(environment)
+        displayName: Kubernetes setup
+        steps:
+          - script: |
+              chmod +x ./scripts/kubernetes_tools.sh
+            displayName: "Enable script permissions"
+
+          - task: Bash@3
+            inputs:
+              filePath: "./scripts/kubernetes_tools.sh"
+              arguments: "$(environment) $(deploymentRG) $(subscriptionID) $(armClientID) $(armClientSecret) $(armTenantID) $(aksClusterName) $(storageAccountName)"
+            displayName: "Run kubernetes setup script"

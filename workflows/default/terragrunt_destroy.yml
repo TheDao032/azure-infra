@@ -1,0 +1,30 @@
+stages:
+  - stage: terragrunt_destroy
+    jobs:
+      - job: terragrunt_destroy_job
+        pool:
+          name: ntuc-docker
+          vmImage: azp-jumpbox-agent
+        displayName: Terragrunt destroy
+        steps:
+          - script: |
+              chmod +x ./scripts/terragrunt_destroy.sh
+            displayName: "Enable script permissions"
+
+          - task: Bash@3
+            inputs:
+              filePath: "./scripts/terragrunt_destroy.sh"
+              arguments: "plan.log $(environment) $(resourceGroup) $(storageAccountName) $(storageAccountKey) $(subscriptionID) $(container) $(location) $(armClientID) $(armClientSecret) $(armTenantID) $(armObjectID) $(jumpboxVmPassword) $(azpUrl) $(azpToken) $(azpPool) $(azpAgent) $(targetarch) $(crPassword) $(crName)"
+            displayName: "Run terragrunt destroy-all"
+
+          - task: CopyFiles@2
+            inputs:
+              contents: "destroy.log"
+              targetFolder: $(Build.ArtifactStagingDirectory)
+            displayName: "Copy destroy output to artifact staging directory"
+
+          - task: PublishPipelineArtifact@0
+            inputs:
+              targetPath: "$(Build.ArtifactStagingDirectory)"
+              ArtifactName: "terragrunt_destroy"
+            displayName: "Publish terragrunt_destroy artifact"
