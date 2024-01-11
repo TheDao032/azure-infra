@@ -4,8 +4,9 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  - group: infra-ntd-common-v2
-  - group: infra-ntd-secrets-v2
+  - group: infra-rs-ntd-common-v1
+  - group: infra-terraform-common-v1
+  - group: infra-ntd-secrets-v1
   - name: environment
     ${{ if eq( variables['Build.SourceBranchName'], 'dev' ) }}:
       value: dev

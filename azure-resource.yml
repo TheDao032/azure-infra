@@ -4,8 +4,8 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  - group: infra-ntd-common-v2
-  - group: infra-ntd-secrets-v2
+  - group: infra-rs-ntd-common-v1
+  - group: infra-ntd-secrets-v1
 
 stages:
   - template: /workflows/default/resources_init.yml
