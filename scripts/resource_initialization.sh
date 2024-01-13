@@ -32,7 +32,8 @@ az storage account create --name ${STORAGE_ACCOUNT_NAME} --resource-group ${RESO
 az storage container create --name ${CONTAINER} --account-name ${STORAGE_ACCOUNT_NAME}
 az storage container create --name ${VELERO_CONTAINER} --account-name ${STORAGE_ACCOUNT_NAME}
 
-az vm create -n ${VM_NAME} -g ${RESOURCE_GROUP} --image Ubuntu2204 --size Standard_B2s --security-type Standard --generate-ssh-keys --admin-username ${VM_USER}
-az vm run-command -g ${RESOURCE_GROUP} -n ${VM_NAME} --command-id RunShellScript --script-file configure_self_host_agent.sh --parameters ${VM_USER} ${ARM_CLIENT_ID} ${ARM_CLIENT_SECRET} ${ARM_TENANT_ID} ${AZP_URL} ${AZP_TOKEN} ${AZP_POOL} ${AZP_AGENT_NAME} ${TARGETARCH} ${CR_PASSWORD} ${CR_NAME}
+# az vm create -n ${VM_NAME} -g ${RESOURCE_GROUP} --image Ubuntu2204 --size Standard_B2s --security-type Standard --generate-ssh-keys --admin-username ${VM_USER}
+#
+# az vm run-command -g ${RESOURCE_GROUP} -n ${VM_NAME} --command-id RunShellScript --script-file configure_self_host_agent.sh --parameters ${VM_USER} ${ARM_CLIENT_ID} ${ARM_CLIENT_SECRET} ${ARM_TENANT_ID} ${AZP_URL} ${AZP_TOKEN} ${AZP_POOL} ${AZP_AGENT_NAME} ${TARGETARCH} ${CR_PASSWORD} ${CR_NAME}
 
 # az acr create -n ${CONTAINER_REGISTRY_NAME} -g ${RESOURCE_GROUP} --sku Premium --admin-enabled true --allow-exports true --allow-trusted-services true --default-action Allow
